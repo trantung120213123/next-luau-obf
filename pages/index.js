@@ -33,7 +33,6 @@ export default function Home(){
       });
       const j = await r.json();
       if (r.ok) {
-        // keep original key names used by your API
         setOut(j.obf ?? j.obfuscated ?? '');
         setMap(j.map ?? null);
       } else {
@@ -71,7 +70,8 @@ export default function Home(){
 
         <div style={{width:'40%'}}>
           <div style={{marginBottom:10}}>
-            <label>Threshold chuỗi (>= chars): </label>
+            {/* ⚙️ FIX: escape ký tự > trong JSX */}
+            <label>Threshold chuỗi (&gt;= chars): </label>
             <input
               type="number"
               value={threshold}
@@ -129,7 +129,9 @@ export default function Home(){
 
           <div style={{marginTop:10}}>
             <h4>Map (JSON)</h4>
-            <pre style={{height:160,overflow:'auto',background:'#0b0b0b',color:'#9fdab0',padding:8}}>{map ? JSON.stringify(map, null, 2) : '—'}</pre>
+            <pre style={{height:160,overflow:'auto',background:'#0b0b0b',color:'#9fdab0',padding:8}}>
+              {map ? JSON.stringify(map, null, 2) : '—'}
+            </pre>
           </div>
         </div>
       </div>
