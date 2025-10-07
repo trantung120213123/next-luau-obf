@@ -21,12 +21,21 @@ export default function Home(){
       const r = await fetch('/api/obf', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ code, threshold: Number(threshold), preserve, pack, junkCount: Number(junkCount), junkLevel: Number(junkLevel), oneLine })
+        body: JSON.stringify({
+          code,
+          threshold: Number(threshold),
+          preserve,
+          pack: !!pack,
+          junkCount: Number(junkCount),
+          junkLevel: Number(junkLevel),
+          oneLine: !!oneLine
+        })
       });
       const j = await r.json();
       if (r.ok) {
-        setOut(j.obf);
-        setMap(j.map);
+        // keep original key names used by your API
+        setOut(j.obf ?? j.obfuscated ?? '');
+        setMap(j.map ?? null);
       } else {
         alert(j.error || 'Error');
       }
@@ -35,6 +44,7 @@ export default function Home(){
   }
 
   function downloadFile() {
+    if (!out) return;
     const blob = new Blob([out], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -52,12 +62,23 @@ export default function Home(){
       <p style={{color:'#666'}}>Dùng để nghiên cứu / bảo vệ mã. Không dùng cho hành vi trái pháp luật.</p>
 
       <div style={{display:'flex',gap:12}}>
-        <textarea value={code} onChange={e=>setCode(e.target.value)} style={{width:'60%',height:520,padding:8,fontFamily:'monospace'}} placeholder="Dán code Luau/Roblox ở đây" />
+        <textarea
+          value={code}
+          onChange={e=>setCode(e.target.value)}
+          style={{width:'60%',height:520,padding:8,fontFamily:'monospace'}}
+          placeholder="Dán code Luau/Roblox ở đây"
+        />
 
         <div style={{width:'40%'}}>
           <div style={{marginBottom:10}}>
             <label>Threshold chuỗi (>= chars): </label>
-            <input type="number" value={threshold} onChange={e=>setThreshold(e.target.value)} min={1} style={{width:80,marginLeft:8}} />
+            <input
+              type="number"
+              value={threshold}
+              onChange={e=>setThreshold(Number(e.target.value))}
+              min={1}
+              style={{width:80,marginLeft:8}}
+            />
           </div>
 
           <div style={{marginBottom:10}}>
@@ -66,15 +87,32 @@ export default function Home(){
           </div>
 
           <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:10}}>
-            <label><input type="checkbox" checked={pack} onChange={e=>setPack(e.target.checked)} /> Pack (encode toàn bộ + loader)</label>
-            <label style={{marginLeft:8}}><input type="checkbox" checked={oneLine} onChange={e=>setOneLine(e.target.checked)} /> Xuất 1 dòng (one-line)</label>
+            <label>
+              <input type="checkbox" checked={pack} onChange={e=>setPack(e.target.checked)} /> Pack (encode toàn bộ + loader)
+            </label>
+            <label style={{marginLeft:8}}>
+              <input type="checkbox" checked={oneLine} onChange={e=>setOneLine(e.target.checked)} /> Xuất 1 dòng (one-line)
+            </label>
           </div>
 
           <div style={{marginBottom:10}}>
             <label>Junk blocks:</label>
-            <input type="number" min="0" value={junkCount} onChange={e=>setJunkCount(e.target.value)} style={{width:80,marginLeft:8}} />
+            <input
+              type="number"
+              min="0"
+              value={junkCount}
+              onChange={e=>setJunkCount(Number(e.target.value))}
+              style={{width:80,marginLeft:8}}
+            />
             <label style={{marginLeft:10}}>Junk level:</label>
-            <input type="number" min="1" max="5" value={junkLevel} onChange={e=>setJunkLevel(e.target.value)} style={{width:80,marginLeft:8}} />
+            <input
+              type="number"
+              min="1"
+              max="5"
+              value={junkLevel}
+              onChange={e=>setJunkLevel(Number(e.target.value))}
+              style={{width:80,marginLeft:8}}
+            />
           </div>
 
           <div style={{marginTop:8}}>
