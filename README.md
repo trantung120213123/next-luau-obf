@@ -1,0 +1,2 @@
+# next-luau-obf
+c
